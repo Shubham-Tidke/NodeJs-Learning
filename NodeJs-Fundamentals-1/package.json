@@ -1,0 +1,15 @@
+{
+  "name": "shubham",
+  "version": "1.0.0",
+  "description": "Learning NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "shubham",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "inquirer": "^8.0.0"
+  }
+}
