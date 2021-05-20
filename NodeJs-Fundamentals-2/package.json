@@ -1,0 +1,11 @@
+{
+  "name": "nodejs-fundamentals-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "author": "shubham",
+  "license": "ISC"
+}
