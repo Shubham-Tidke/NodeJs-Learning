@@ -1,0 +1,11 @@
+{
+  "name": "mini-project-1",
+  "version": "1.0.0",
+  "description": "Serving static html pages",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "author": "Shubham Tidke",
+  "license": "ISC"
+}
