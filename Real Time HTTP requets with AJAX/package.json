@@ -1,0 +1,14 @@
+{
+  "name": "reuests-with-ajax",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "author": "Shubham",
+  "license": "ISC",
+  "dependencies": {
+    "xml2js": "^0.4.23"
+  }
+}
