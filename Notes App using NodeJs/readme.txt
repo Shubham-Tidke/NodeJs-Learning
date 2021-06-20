@@ -1,6 +1,6 @@
---Notes app using node.js--
+# Notes app using node.js
 
-functionality:
+## functionality:
 
 app works on 4 functionalities:
  
