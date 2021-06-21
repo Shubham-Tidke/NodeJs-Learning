@@ -1,12 +1,15 @@
---Notes app using node.js--
+# Notes app using node.js
 
-functionality:
+## functionality:
 
-app works on 4 functionalities:
+## app works on 4 functionalities:
  
-	1.add notes 2.list notes 3.remove notes 4.find notes
+### 1. add notes 
+### 2.list notes 
+### 3.remove notes
+### 4.find notes
 
-How to use:
+## How to use:
  1. node .\app.js --help  to get to know more about commands
  2. node .\app.js --add --title ="note-title" --body ="note-body"  to add notes 
  3. node .\app.js --remove --title ="note-title" to remove note with provided title
