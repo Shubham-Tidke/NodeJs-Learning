@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-
-//defining  model(name-of-model,defination) 
-const User = mongoose.model('User', {
+const becrypt = require('bcryptjs');
+//storing object in userSchema before creating mongoose model to hash the password and store it securely
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true, //validating the complusion of field
@@ -38,7 +38,21 @@ const User = mongoose.model('User', {
             }
         }
     }
+});
+
+//performing hashing before saving user [function passed here need to be standard one as bnding is important here]
+
+userSchema.pre('save', async function (next) {
+    const user = this;
+    //hash the password,if user has modified the password in update query
+    if (user.isModified('password')) {
+        user.password = await becrypt.hash(user.password, 8)
+    }
+    next();//need to call this when done
 })
+
+//defining  model(name-of-model,defination) 
+const User = mongoose.model('User', userSchema)
 
 
 module.exports = User;
