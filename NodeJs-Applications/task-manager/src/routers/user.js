@@ -57,7 +57,13 @@ router.patch('/users/:id', async (req, res) => {
     try {
         //updates will be received through http request[req.body]
         //runValidator validates newly provided updates
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        //findByIdAndUpdate passes middleware logics which stores password securely
+        const user = await User.findById(req.params.id);
+        updates.forEach((update) => {
+            user[update] = req.body[update];
+        })
+        await user.save();
+        //   const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
         if (!user) {
             return res.status(404).send();
         }

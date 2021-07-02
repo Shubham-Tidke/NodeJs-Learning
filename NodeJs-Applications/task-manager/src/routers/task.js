@@ -38,7 +38,6 @@ router.get('/tasks/:id', async (req, res) => {
         res.status(500).send(error);
     }
 })
-
 //upating tasks
 router.patch('/tasks/:id', async (req, res) => {
     const allowedUpdates = ['completed', 'description'];
@@ -48,7 +47,13 @@ router.patch('/tasks/:id', async (req, res) => {
         return res.status(400).send('Invalid task property provided')
     }
     try {
-        const task = await Tasks.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        //findByIdAndUpdate passes middleware logics which stores password securely
+        const task = await Tasks.findById(req.params.id)
+        updates.forEach((update) => {
+            task[update] = req.body[update];
+        })
+        await task.save();
+        //const task = await Tasks.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
         if (!task) {
             return res.status(404).send();
         }
@@ -57,7 +62,6 @@ router.patch('/tasks/:id', async (req, res) => {
         res.status(400).send(error);
     }
 })
-
 //Delete Task
 router.delete('/tasks/:id', async (req, res) => {
     const task = await Tasks.findByIdAndDelete(req.params.id);
@@ -69,5 +73,4 @@ router.delete('/tasks/:id', async (req, res) => {
         res.status(500).send(error);
     }
 })
-
 module.exports = router;
