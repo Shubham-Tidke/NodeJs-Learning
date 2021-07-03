@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router();
-
 
 
 //adding users [async-await ]
@@ -9,22 +9,31 @@ router.post('/users', async (req, res) => {
     const user = new User(req.body);
     try {
         await user.save();
-        res.status(201).send(user);
+        const token = await user.generateAuthToken();//generating token when user signin
+        res.status(201).send({ user, token });
     } catch (error) {
         res.status(400).send(error);
     }
 })
 
-//fetchig all users [async-await]
-router.get('/users', async (req, res) => {
-
+//user login route
+router.post('/users/login', async (req, res) => {
     try {
-        const users = await User.find({});
-        res.send(users);
-
+        //calling reusable function findByCredentials[models/user.js]using mongoose model to verify provided creds
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        //creating token for user
+        const token = await user.generateAuthToken();
+        res.send({ user, token });
     } catch (error) {
-        res.status(500).send(error);
+        res.status(400).send();
     }
+})
+//fetchig user profile [async-await]
+//passing auth middleware before executing the route 
+router.get('/users/me', auth, async (req, res) => {
+    //function will execute ony when auth gets successful,
+    //if it is successful,just get the user  
+    res.send(req.user);
 })
 
 //fetching single user [async-await]

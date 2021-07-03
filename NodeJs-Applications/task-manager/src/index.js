@@ -7,6 +7,7 @@ const taskRouter = require('./routers/task')
 const app = express();
 const port = process.env.port || 3000
 
+
 app.use(express.json()) //Returns middleware that only parses json due to which incoming data is accesible
 app.use(userRouter)//registering router for user
 app.use(taskRouter)//registering router for task
@@ -16,4 +17,3 @@ app.listen(port, () => {
 })
 
 
- 
