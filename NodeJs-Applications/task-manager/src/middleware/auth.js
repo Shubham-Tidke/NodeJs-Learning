@@ -13,7 +13,8 @@ const auth = async (req, res, next) => {
         if (!user) {
             throw new Error()
         }
-        req.user = user;
+        req.token = token;//adding token so that it can be accessed by route handlers for further operations[CRUD tasks,logout]
+        req.user = user; //adding user to request so that it can be accessed by route handlers
         next();
     } catch (error) {
         res.status(401).send({ error: "authentication failed!" })
