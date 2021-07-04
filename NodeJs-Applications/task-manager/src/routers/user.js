@@ -4,7 +4,7 @@ const auth = require('../middleware/auth')
 const router = new express.Router();
 
 
-//adding users [async-await ]
+//signup users [async-await ]
 router.post('/users', async (req, res) => {
     const user = new User(req.body);
     try {
@@ -28,6 +28,32 @@ router.post('/users/login', async (req, res) => {
         res.status(400).send();
     }
 })
+
+//user logout route[deleting the authentication token user used to login]
+router.post('/users/logout', auth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((tok) => {
+            return tok.token !== req.token
+            //if tok.token !== req.token gives false[token used for login isfound], it will be filtered
+        })
+        await req.user.save();
+        res.send()
+    } catch (error) {
+        res.status(500).send();
+    }
+})
+//logout all sessions[deleting all tokes]
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try {
+        //deleting all active session tokens
+        req.user.tokens = [];
+        await req.user.save();
+        res.send();
+    } catch (error) {
+        res.status(500).send();
+    }
+})
+
 //fetchig user profile [async-await]
 //passing auth middleware before executing the route 
 router.get('/users/me', auth, async (req, res) => {
@@ -37,23 +63,23 @@ router.get('/users/me', auth, async (req, res) => {
 })
 
 //fetching single user [async-await]
-router.get('/users/:id', async (req, res) => {
-    const _id = req.params.id;
-    try {
-        if (_id.match(/^[0-9a-fA-F]{24}$/)) {
-            const user = await User.findById(_id);
-            res.send(user);
-        }
-        else {
-            return res.status(404).send("User not found");
-        }
-    } catch (error) {
-        res.status(500).send();
-    }
-})
+// router.get('/users/:id', async (req, res) => {
+//     const _id = req.params.id;
+//     try {
+//         if (_id.match(/^[0-9a-fA-F]{24}$/)) {
+//             const user = await User.findById(_id);
+//             res.send(user);
+//         }
+//         else {
+//             return res.status(404).send("User not found");
+//         }
+//     } catch (error) {
+//         res.status(500).send();
+//     }
+// })
 
 //updating users [async-await]
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['name', 'email', 'password', 'age'];
     //checks for unknown property
@@ -66,30 +92,22 @@ router.patch('/users/:id', async (req, res) => {
     try {
         //updates will be received through http request[req.body]
         //runValidator validates newly provided updates
-        //findByIdAndUpdate passes middleware logics which stores password securely
-        const user = await User.findById(req.params.id);
         updates.forEach((update) => {
-            user[update] = req.body[update];
+            req.user[update] = req.body[update];
         })
-        await user.save();
-        //   const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-        if (!user) {
-            return res.status(404).send();
-        }
-        res.send(user);
+        await req.user.save();
+        res.send(req.user);
     } catch (error) {
         res.status(400).send(error); //handling only validation error
     }
 })
 
 //Delete User
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/me', auth, async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) {
-            res.status(404).send('User Not Found!');
-        }
-        res.send(user);
+        //req object has user attched to it[in auth.js],using req.user current logged user is accessed
+        await req.user.remove();
+        res.send(req.user);
     } catch (error) {
         res.status(500).send(error);
     }
