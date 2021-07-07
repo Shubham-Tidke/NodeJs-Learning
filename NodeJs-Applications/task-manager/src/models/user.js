@@ -48,6 +48,9 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
+}, { //new schema object to enable timestamps
+    timestamps: true
+
 });
 
 //setting up virtual property to link users with thier tasks
