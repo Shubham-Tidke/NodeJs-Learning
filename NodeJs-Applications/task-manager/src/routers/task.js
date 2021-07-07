@@ -1,7 +1,6 @@
 const express = require('express')
 const Tasks = require('../models/task')
 const auth = require("../middleware/auth");
-const { request } = require('express');
 const router = new express.Router();
 
 
@@ -20,11 +19,30 @@ router.post('/tasks', auth, async (req, res) => {
 })
 
 //fetching tasks [async-await]
+//filtering tasks using field 'completed' GET/tasks?completed=true/false
+//pagination using field limit GET/tasks?limit=10&skip=0 skip field to skip number of tasks to skip 
+//sorting GET /tasks?sortBy=createdAt:asc/desc
 router.get('/tasks', auth, async (req, res) => {
+    const match = {}
+    if (req.query.completed) {
+        // req.query.completed returns string,if string is 'true',returns boolean true else false
+        match.completed = req.query.completed === 'true'
+    }
     try {
         //fetching only those tasks which are related to user's id
-        const tasks = await Tasks.find({ owner: req.user._id });
-        res.send(tasks);
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort: {
+                    createdAt: req.query.sort
+                }
+
+            }
+        }).execPopulate();
+        res.send(req.user.tasks)
     } catch (error) {
         res.status(500).send(error);
     }
