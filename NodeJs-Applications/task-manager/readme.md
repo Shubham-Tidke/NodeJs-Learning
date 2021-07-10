@@ -4,8 +4,8 @@
 ## Steps
 ### 1. User can sign-up with details like name,age,email,password and profile-image [Passwords are hashed]
 ### 2. User can login with email and password & create tasks with details like Description,isCompleted. 
-### 3. User can update and delete only their tasks
-### 4. User can view their only tasks.
+### 3. User can update and delete only their tasks.
+### 4. User can view only their tasks.
 ### 5. User can upload/Remove their profile image.
 ### 6. User can perform pagination,filetring on their tasks.
 
