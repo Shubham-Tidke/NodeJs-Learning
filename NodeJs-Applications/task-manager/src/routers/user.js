@@ -1,8 +1,9 @@
 const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const multer = require('multer')//to support file upload
+const sharp = require('sharp');//to resize/format the image
 const router = new express.Router();
-
 
 //signup users [async-await ]
 router.post('/users', async (req, res) => {
@@ -112,5 +113,49 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(500).send(error);
     }
 })
+//uploading profile pictures for users
 
+const upload = multer({
+    //dest: 'avatar', //destination folder name
+    limits: {
+        fileSize: 1000000 //filesize limit to 1mb
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)/))
+            return cb(new Error('file format invalid'))
+        cb(undefined, true);
+    }
+
+})
+//upload profile image
+router.post('/users/avatar', auth, upload.single('avatar'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer) //req.file.buffer will be the image for user
+        .resize({ width: 250, height: 250 })//resizing using sharp
+        .png()//converting the image to png
+        .toBuffer();//geeting the image back in form of buffer
+    req.user.avatar = buffer //storing processed buffer
+    await req.user.save();
+    res.send();
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+//delete profile image
+router.delete('/users/avatar', auth, upload.single('avatar'), async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.send();
+})
+//get profile image
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error();
+        }
+        res.set('Content-Type', 'image/png');
+        res.send(user.avatar);
+    } catch (error) {
+        res.status(404).send();
+    }
+})
 module.exports = router;

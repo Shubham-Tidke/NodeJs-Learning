@@ -47,7 +47,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    avatar: {
+        type: Buffer //binary image storing
+    }
 }, { //new schema object to enable timestamps
     timestamps: true
 
@@ -67,6 +70,7 @@ userSchema.methods.toJSON = function () {
     const userObject = user.toObject()//toObject is method provided by mongoose which return raw profile data
     delete userObject.password; //removing passwords from raw data to hide it from view
     delete userObject.tokens;//removing token from raw data to hide it from view
+    delete userObject.avatar;//removing from response
     return userObject;
 }
 
