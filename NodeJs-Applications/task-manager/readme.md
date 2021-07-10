@@ -1,6 +1,6 @@
 # Task-Manager API using node.js
 ## Functionality:
-###	User can sign-up/login using JWT Authentication and perform CRUD operations on tasks.
+###	CRUD operations on tasks created by the User.
 ## Steps
 ### 1. User can sign-up with details like name,age,email,password and profile-image [Passwords are hashed]
 ### 2. User can login with email and password & create tasks with details like Description,isCompleted. 
